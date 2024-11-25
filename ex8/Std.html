@@ -1,0 +1,54 @@
+<html>
+<head>
+<script>
+function LoadXmlDoc(dname) {
+    var xmldoc = new ActiveXObject("Microsoft.XMLDOM"); // For Internet Explorer only
+    xmldoc.async = "false";
+    xmldoc.load(dname);
+    return xmldoc;
+}
+
+function validate() {
+    var v1 = document.myform.n2.value; // Get roll number input
+    if(v1.length==0) {
+        window.alert("Enter the roll number.");
+        return; // Stop execution if no input
+    }
+
+    var xmldoc = LoadXmlDoc("student.xml");
+    var students = xmldoc.getElementsByTagName("students");
+    var found = false;
+
+    for (var i = 0; i < students.length; i++) {
+        var rollno = students[i].getElementsByTagName("rollno")[0].childNodes[0].nodeValue;
+        if (rollno == v1) {  // Use == for comparison
+            var name = students[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
+            var percentage = students[i].getElementsByTagName("percentage")[0].childNodes[0].nodeValue;
+
+            // Display the results in a table (using innerHTML is more efficient)
+            var output = "<table border=1 align='center'><tr><th colspan='2'>USER DETAILS</th></tr>" +
+                         "<tr><th>Name:</th><td>" + name + "</td></tr>" +
+                         "<tr><th>Roll Number:</th><td>" + rollno + "</td></tr>" +
+                         "<tr><th>Percentage:</th><td>" + percentage + "</td></tr></table>";
+
+            document.body.innerHTML += output; // Append the output to the body
+            found = true;
+            break; // Exit loop after finding the student
+        }
+    }
+
+    if (!found) {
+        window.alert("Roll number not found.");
+    }
+}
+</script>
+</head>
+<body bgcolor="pink" text="red">
+<form name="myform">
+<table align="center">
+<tr><td><b>Roll Number:</b></td><td><input type="text" size="15" name="n2"></td></tr>
+</table>
+<br>
+<center><input type="button" value="Submit" onclick="validate()"></center> </form>
+</body>
+</html>
